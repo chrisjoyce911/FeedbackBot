@@ -14,13 +14,15 @@ func main() {
 	slackPtr := flag.String("s", "", "Slack token")
 	hipPtr := flag.String("h", "", "HipChat token")
 	channelPtr := flag.String("c", "Error Logs", "Slack channel")
-	roomPtr := flag.String("r", "Integration Testing", "HipChat room")
+	roomMobPtr := flag.String("m", "Integration Testing", "Mobile HipChat room")
+	roomWebPtr := flag.String("w", "Integration Testing", "Web HipChat room")
 
 	flag.Parse()
 
 	var SlackToken = *slackPtr
 	var HipToken = *hipPtr
-	var HipRoomID = *roomPtr
+	var MobHipRoomID = *roomMobPtr
+	var WebHipRoomID = *roomWebPtr
 	var SlackChannel = *channelPtr
 
 	ws, id := slackConnect(SlackToken)
@@ -52,11 +54,26 @@ func main() {
 				if m.Channel == SlackChannel {
 					c := hipchat.Client{AuthToken: HipToken}
 
+					var background = "gray"
+
+					if strings.Contains(m.Text, "Rating: Satisfied") {
+						background = hipchat.ColorRed
+					} else if strings.Contains(m.Text, "Rating: Neutral") {
+						background = hipchat.ColorYellow
+					} else if strings.Contains(m.Text, "Rating: Not Satisfied") {
+						background = hipchat.ColorGreen
+					}
+
+					var HipRoomID = MobHipRoomID
+					if strings.Contains(m.Text, "OzLotteries for Web") {
+						HipRoomID = WebHipRoomID
+					}
+
 					req := hipchat.MessageRequest{
 						RoomId:        HipRoomID,
 						From:          "Jonny Boom",
 						Message:       m.Text,
-						Color:         hipchat.ColorPurple,
+						Color:         background,
 						MessageFormat: hipchat.FormatText,
 						Notify:        true,
 					}
