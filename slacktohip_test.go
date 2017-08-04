@@ -24,6 +24,7 @@ func Test_main(t *testing.T) {
 		expected int
 	}{
 		{"add", 2, 2, 4},
+		{"add", 4, 4, 8},
 		{"minus", 0, -2, -2},
 		{"zero", 0, 0, 0},
 	}
