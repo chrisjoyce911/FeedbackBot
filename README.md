@@ -1,5 +1,5 @@
 
-# mybot
+# Slack to HipChat [![Build Status](https://travis-ci.org/chrisjoyce911/slacktohip.svg?branch=master)](https://travis-ci.org/chrisjoyce911/slacktohip)
 
 `mybot` is an working Slack bot written in Go. Fork it and use it to build
 your very own cool Slack bot!
