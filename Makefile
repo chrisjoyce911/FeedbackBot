@@ -1,5 +1,5 @@
 PACKAGES := github.com/chrisjoyce911/slacktohip
-DEPENDENCIES := github.com/andybons/hipchat
+DEPENDENCIES := github.com/andybons/hipchat golang.org/x/net/websocket
 
 all: build silent-test docker
 

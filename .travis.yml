@@ -2,6 +2,7 @@ language: go
 
 install:
   - go get github.com/andybons/hipchat
+  - go get golang.org/x/net/websocket
   - go get -d -v ./...
 
 script:
