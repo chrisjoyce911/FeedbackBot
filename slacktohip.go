@@ -25,6 +25,13 @@ func main() {
 	var WebHipRoomID = *roomWebPtr
 	var SlackChannel = *channelPtr
 
+	switch {
+	case *slackPtr == "":
+		log.Fatalln("Slack token is a required argument")
+	case *hipPtr == "":
+		log.Fatalln("Hipchat token is a required argument")
+	}
+
 	ws, id := slackConnect(SlackToken)
 
 	fmt.Println("mybot ready, ^C exits")
@@ -85,7 +92,6 @@ func main() {
 				}
 			}
 		}
-
 	}
 }
 
