@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"strings"
@@ -10,29 +11,35 @@ import (
 
 func main() {
 
-	messagecount := 0
-	ws, id := slackStart("FIXME")
+	slackPtr := flag.String("s", "", "Slack token")
+	hipPtr := flag.String("h", "", "HipChat token")
+	channelPtr := flag.String("c", "Error Logs", "Slack channel")
+	roomPtr := flag.String("r", "Integration Testing", "HipChat room")
+
+	flag.Parse()
+
+	var SlackToken = *slackPtr
+	var HipToken = *hipPtr
+	var HipRoomID = *roomPtr
+	var SlackChannel = *channelPtr
+
+	ws, id := slackConnect(SlackToken)
+
 	fmt.Println("mybot ready, ^C exits")
 
 	for {
 		m, err := getMessage(ws)
 		if err != nil {
 			fmt.Println(err)
-			messagecount = 0
 		} else {
 
 			if m.Type == "message" && strings.HasPrefix(m.Text, "<@"+id+">") {
 				// if so try to parse if
 				parts := strings.Fields(m.Text)
 				if len(parts) == 2 && parts[1] == "channel" {
-					// looks good, get the quote and reply with the result
-
 					go func(m Message) {
 						m.Text = fmt.Sprintf("This is channel %v\n", m.Channel)
-						// postMessage(ws, m)
 					}(m)
-
-					// NOTE: the Message object is copied, this is intentional
 				} else {
 					// huh?
 					m.Text = fmt.Sprintf("sorry, that does not compute\n")
@@ -41,15 +48,14 @@ func main() {
 			}
 
 			if m.Type == "message" {
-				fmt.Printf("%s %s %s\n", m.Tstamp, m.Channel, m.Text)
-
-				if m.Channel == "FIXME" {
-					c := hipchat.Client{AuthToken: "FIXME"}
+				fmt.Printf("%s %s\n", m.Channel, m.Text)
+				if m.Channel == SlackChannel {
+					c := hipchat.Client{AuthToken: HipToken}
 
 					req := hipchat.MessageRequest{
-						RoomId:        "Feedback Room",
+						RoomId:        HipRoomID,
 						From:          "Jonny Boom",
-						Message:       fmt.Sprintf("Message forwarded Slack : %s", m.Text),
+						Message:       m.Text,
 						Color:         hipchat.ColorPurple,
 						MessageFormat: hipchat.FormatText,
 						Notify:        true,
@@ -58,7 +64,6 @@ func main() {
 						log.Printf("Expected no error, but got %q", err)
 					}
 				}
-				messagecount++
 			}
 		}
 
