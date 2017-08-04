@@ -1,25 +1,24 @@
-PACKAGES := github.com/chrisjoyce911/slacktohip
-DEPENDENCIES := github.com/andybons/hipchat golang.org/x/net/websocket
+.PHONY: deps silent-test format test docker builddocker
 
-all: build silent-test docker
+all: bin/slacktohip bin/mydockerbot
 
-docker:
+bin/slacktohip: slacktohip.go slack.go
+	go build -o bin/slacktohip .
+
+bin/mydockerbot: slack.go slacktohip.go
 	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/mydockerbot .
 
 builddocker:
 	docker build -t slacktohip -f Dockerfile .
 
-build:
-	go build -o bin/slacktohip .
-
 test:
-	go test -v $(PACKAGES)
+	go test -v ./...
 
 silent-test:
-	go test $(PACKAGES)
+	go test ./...
 
 format:
-	go fmt $(PACKAGES)
+	go fmt ./...
 
 deps:
-	go get $(DEPENDENCIES)
+	go get -v ./...
