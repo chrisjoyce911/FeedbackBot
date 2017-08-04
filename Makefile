@@ -5,6 +5,10 @@ all: build silent-test docker
 
 docker:
 	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/mydockerbot .
+
+builddocker:
+	docker build -t slacktohip -f Dockerfile .
+
 build:
 	go build -o bin/slacktohip .
 
