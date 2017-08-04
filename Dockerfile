@@ -1,3 +1,3 @@
 FROM scratch
-ADD mydockerbot /
+ADD bin/mydockerbot /
 CMD ["/mydockerbot"]
