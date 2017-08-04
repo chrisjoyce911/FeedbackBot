@@ -38,11 +38,12 @@ func main() {
 			if m.Type == "message" && strings.HasPrefix(m.Text, "<@"+id+">") {
 				// if so try to parse if
 				parts := strings.Fields(m.Text)
-				if len(parts) == 2 && parts[1] == "channel" {
+				switch {
+				case len(parts) == 2 && parts[1] == "channel":
 					go func(m Message) {
 						m.Text = fmt.Sprintf("This is channel %v\n", m.Channel)
 					}(m)
-				} else {
+				default:
 					// huh?
 					m.Text = fmt.Sprintf("sorry, that does not compute\n")
 					postMessage(ws, m)
@@ -56,11 +57,12 @@ func main() {
 
 					var background = "gray"
 
-					if strings.Contains(m.Text, "Rating: Satisfied") {
+					switch {
+					case strings.Contains(m.Text, "Rating: Satisfied"):
 						background = hipchat.ColorRed
-					} else if strings.Contains(m.Text, "Rating: Neutral") {
+					case strings.Contains(m.Text, "Rating: Neutral"):
 						background = hipchat.ColorYellow
-					} else if strings.Contains(m.Text, "Rating: Not Satisfied") {
+					case strings.Contains(m.Text, "Rating: Not Satisfied"):
 						background = hipchat.ColorGreen
 					}
 
@@ -78,7 +80,7 @@ func main() {
 						Notify:        true,
 					}
 					if err := c.PostMessage(req); err != nil {
-						log.Printf("Expected no error, but got %q", err)
+						log.Fatalln("Expected no error, but got %q", err)
 					}
 				}
 			}
