@@ -6,7 +6,7 @@ before_install:
 install:
   - go get github.com/andybons/hipchat
   - go get golang.org/x/net/websocket
-  - go get code.google.com/p/go.tools/cmd/cover
+  - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
   - go get -d -v ./...
 
