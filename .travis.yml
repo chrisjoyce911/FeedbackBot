@@ -1,24 +1,21 @@
 language: go
 sudo: false
 before_install:
-      - go get github.com/mattn/goveralls
-
+- go get github.com/mattn/goveralls
 install:
-  - go get github.com/andybons/hipchat
-  - go get golang.org/x/net/websocket
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-  - go get -d -v ./...
-
+- go get github.com/andybons/hipchat
+- go get golang.org/x/net/websocket
+- go get golang.org/x/tools/cmd/cover
+- go get github.com/mattn/goveralls
+- go get -d -v ./...
 script:
-  - go test -v -covermode=count -coverprofile=profile.cov
-  - $(go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=profile.cov -service=travis-ci -repotoken $COVERALLS_TOKEN
-
-env:
-  global:
-    secure: ylD5Pxrzltdrz2drKGUVkLrpXMQRhfKnKftMWWAsHrkp4Hp9tHW6OCEyg2Ae7PnIPhC3PdnOWoTCkhlrY5ZxFiMJY/HIP6izOrJLEDTtdU8NiNzK3Hx/OhAjwPJv5ST2c/euE29Nr3dcmOoHYuNCmwMl/10XxmWLcj24rdxF4qbqUeWRVfPvIwwx2JzYuTb7zqFSzKB9I86IC0YE03K4gQI4lCNq/c+mriFoRds7wPWL6BcDqezYSQLBqVhEVwKuoyW+loDBJVPcwTlDp5Wf1j5gNm2NNGZVfRAvngbuASWuZEWou1xkqHnKYjX+uun8OwQ68/jTem13Q6ncmkmqH3YNAhae6nAXlTFMdw/BSxDzn7dGYrIbaMQafteYreNUzu8BXrWMH6X0oMATngpWL6ecbyMtWcC3TIVZ9DUyIH0i92xvoy6nLoWsFoxIFlWzUiUgfvgFHJ+OTJhX+s5yXHORGwFJgu8GAr2ESWFQ+H8rW2fm6daAUG4/1mBgzpUzIv3rwO3VFOBrIS+hxciyg37uZGB9XERyet/2goyWCMxhXzqt0iHYbccthPXFs/D5vU2jx5i3fQVk6BDmo9Q36Do7mgvuPR68Bv701LMkNE61Lk7r3BR9fxoIXw15Nt8l7TR1/2iQ22FIwMabpGaZpclDw8Cg+t6lH/mhaFD5Fug=
-    after_success:
-  - goveralls -coverprofile=profile.cov -service=travis-ci
-
+- go test -v -covermode=count -coverprofile=profile.cov
+- $(go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=profile.cov
+  -service=travis-ci -repotoken $COVERALLS_TOKEN
+after_success:
+- goveralls -coverprofile=profile.cov -service=travis-ci
 notifications:
   email: true
+env:
+  global:
+    secure: 2wZRUI9GFkAQAtGsfEuZ59/+bx99jcc3nl4vXVSVlS7B0U0/7eiGcqtkALsgs+16jDcgBIwbe4WJBYG19ECvGTWYcE0nU9u1VagwI8G7u8/t+Cg5YbQA2Ip+AmJS+oWzWcNCdwo2A5mHjFrZQLdklU/7R5zF/F9SdWBM2BADUTJsxKJNf2tLJRvMfpLLdT4T0aCG3Vwalf1ZTAD2Q9vpwoHKARABgIxF+DMMY83Qa/XOqHcP3b61dzfsP77di0bfTF51JArYbk+EY6qic7YJd/pO63eWYavDTqpKMKkqc6SRDBSMEzvuPLL5WPbD9zDuctP9KfWc8rSRV4mJZcy9gn5EFOPJgIWF+NP+/aOSuS2oxFkFpa/7DFv1KAd8y9RIfmSZzWq42w7tTCLoHvFYI1CeqeOIae8yuykSWq1tK5PME/jcczShSApDW0CKZmgx/WNIhfkeRT70EicJT09R3mb5iXWY1J2Wr0SlUs2cNXtjedhkJtPBr8RqLTc2cet477SCd1E3u+8SQvUvde0QjtpHsMP2Dwme4JjECiuJVzl7zDDfP2i6ecOuOucnwK10v4niQI15ykWiwp554naq1DWy+vVApY49lcaiZJxGc4AGfmDOa/CvFTOqt1KNXidY+NoJSH8FevzXLIEfka+QJJeuIIMlfBkkJTIbVxHoG+U=
