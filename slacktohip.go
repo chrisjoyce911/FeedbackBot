@@ -80,7 +80,7 @@ func main() {
 
 					req := hipchat.MessageRequest{
 						RoomId:        HipRoomID,
-						From:          "Slack --> HipCat",
+						From:          "Slack-HipCat",
 						Message:       m.Text,
 						Color:         background,
 						MessageFormat: hipchat.FormatText,
