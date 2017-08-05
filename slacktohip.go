@@ -66,11 +66,11 @@ func main() {
 
 					switch {
 					case strings.Contains(m.Text, "Rating: Satisfied"):
-						background = hipchat.ColorRed
+						background = hipchat.ColorGreen
 					case strings.Contains(m.Text, "Rating: Neutral"):
 						background = hipchat.ColorYellow
 					case strings.Contains(m.Text, "Rating: Not Satisfied"):
-						background = hipchat.ColorGreen
+						background = hipchat.ColorRed
 					}
 
 					var HipRoomID = MobHipRoomID
