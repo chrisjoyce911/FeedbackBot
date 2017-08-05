@@ -1,5 +1,5 @@
 
-# Slack to HipChat [![Build Status](https://travis-ci.org/chrisjoyce911/slacktohip.svg?branch=master)](https://travis-ci.org/chrisjoyce911/slacktohip)
+# Slack to HipChat [![Build Status](https://travis-ci.org/chrisjoyce911/slacktohip.svg?branch=master)](https://travis-ci.org/chrisjoyce911/slacktohip) [![Coverage Status](https://coveralls.io/repos/github/chrisjoyce911/slacktohip/badge.svg?branch=master)](https://coveralls.io/github/chrisjoyce911/slacktohip?branch=master) 
 
 `slacktohip` is a very simple single way cross messageing bot.
 
