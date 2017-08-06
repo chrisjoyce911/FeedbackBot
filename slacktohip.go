@@ -48,7 +48,6 @@ func main() {
 		fmt.Println(cfg.Channels[i].Slack)
 	}
 
-	log.Fatalln("Stop here")
 	ws, id := slackConnect(cfg.SlackToken)
 
 	fmt.Printf("%s ready, ^C exits", cfg.BotName)
