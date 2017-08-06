@@ -5,25 +5,37 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/andybons/hipchat"
 )
 
 func main() {
 
-	slackPtr := flag.String("s", "", "Slack token")
-	hipPtr := flag.String("h", "", "HipChat token")
-	channelPtr := flag.String("c", "Error Logs", "Slack channel")
-	roomMobPtr := flag.String("m", "Integration Testing", "Mobile HipChat room")
-	roomWebPtr := flag.String("w", "Integration Testing", "Web HipChat room")
+	cfg, err := LoadConfig("config.json")
+	if err != nil {
+		err = saveConfig(createMockConfig(), "config.json")
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	slackPtr := flag.String("s", cfg.SlackToken, "Slack token")
+	hipPtr := flag.String("h", cfg.HipToken, "HipChat token")
+	channelPtr := flag.String("c", cfg.SlackChannel, "Slack channel")
+	roomMobPtr := flag.String("m", cfg.MobHipRoom, "Mobile HipChat room")
+	roomWebPtr := flag.String("w", cfg.WebHipRoom, "Web HipChat room")
 
 	flag.Parse()
 
-	var SlackToken = *slackPtr
-	var HipToken = *hipPtr
-	var MobHipRoomID = *roomMobPtr
-	var WebHipRoomID = *roomWebPtr
-	var SlackChannel = *channelPtr
+	cfg.SlackToken = *slackPtr
+	cfg.HipToken = *hipPtr
+	cfg.MobHipRoom = *roomMobPtr
+	cfg.WebHipRoom = *roomWebPtr
+	cfg.SlackChannel = *channelPtr
+
+	saveConfig(cfg, "config.json")
+	fmt.Printf("Config saved : %+v\n", cfg)
 
 	switch {
 	case *slackPtr == "":
@@ -32,9 +44,23 @@ func main() {
 		log.Fatalln("Hipchat token is a required argument")
 	}
 
-	ws, id := slackConnect(SlackToken)
+	ws, id := slackConnect(cfg.SlackToken)
 
 	fmt.Println("mybot ready, ^C exits")
+
+	go func() {
+		c := time.Tick(time.Duration(cfg.SlackRepTime) * time.Second)
+		for now := range c {
+			rmsg := Message{
+				Type:    "message",
+				Channel: cfg.SlackReport,
+				Text:    fmt.Sprintf("I'm alive %v\n", now),
+			}
+			postMessage(ws, rmsg)
+		}
+
+		return
+	}()
 
 	for {
 		m, err := getMessage(ws)
@@ -49,6 +75,7 @@ func main() {
 				case len(parts) == 2 && parts[1] == "channel":
 					go func(m Message) {
 						m.Text = fmt.Sprintf("This is channel %v\n", m.Channel)
+						postMessage(ws, m)
 					}(m)
 				default:
 					// huh?
@@ -59,8 +86,8 @@ func main() {
 
 			if m.Type == "message" {
 				fmt.Printf("%s %s\n", m.Channel, m.Text)
-				if m.Channel == SlackChannel {
-					c := hipchat.Client{AuthToken: HipToken}
+				if m.Channel == cfg.SlackChannel {
+					c := hipchat.Client{AuthToken: cfg.HipToken}
 
 					var background = "gray"
 
@@ -73,14 +100,14 @@ func main() {
 						background = hipchat.ColorRed
 					}
 
-					var HipRoomID = MobHipRoomID
+					var HipRoomID = cfg.MobHipRoom
 					if strings.Contains(m.Text, "OzLotteries for Web") {
-						HipRoomID = WebHipRoomID
+						HipRoomID = cfg.WebHipRoom
 					}
 
 					req := hipchat.MessageRequest{
 						RoomId:        HipRoomID,
-						From:          "Slack-HipCat",
+						From:          cfg.BotName,
 						Message:       m.Text,
 						Color:         background,
 						MessageFormat: hipchat.FormatText,
@@ -95,6 +122,7 @@ func main() {
 	}
 }
 
+// Sum .. for testing
 func Sum(a, b int) int {
 	return a + b
 }

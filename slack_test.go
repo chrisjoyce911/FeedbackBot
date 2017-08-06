@@ -40,14 +40,14 @@ func Test_slackStart(t *testing.T) {
 		name      string
 		args      args
 		wantWsurl string
-		wantId    string
+		wantID    string
 		wantErr   bool
 	}{
 	// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotWsurl, gotId, err := slackStart(tt.args.token)
+			gotWsurl, gotID, err := slackStart(tt.args.token)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("slackStart() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -55,8 +55,8 @@ func Test_slackStart(t *testing.T) {
 			if gotWsurl != tt.wantWsurl {
 				t.Errorf("slackStart() gotWsurl = %v, want %v", gotWsurl, tt.wantWsurl)
 			}
-			if gotId != tt.wantId {
-				t.Errorf("slackStart() gotId = %v, want %v", gotId, tt.wantId)
+			if gotID != tt.wantID {
+				t.Errorf("slackStart() gotId = %v, want %v", gotID, tt.wantID)
 			}
 		})
 	}
