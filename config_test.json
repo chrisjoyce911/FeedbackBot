@@ -1,0 +1,20 @@
+{
+  "botbame": "Slack to HipCat",
+  "slacktoken": "",
+  "hiptoken": "",
+  "slackreport": "",
+  "slackreptime": 600,
+  "slackroom": "",
+  "mobilehipchat": "",
+  "webhipchat": "",
+  "Channels": [
+    {
+      "slack": "C5ADCS9FV",
+      "hipchat": "Dev Test Channel"
+    },
+    {
+      "slack": "G6J2D2HCY",
+      "hipchat": "Integration Testing"
+    }
+  ]
+}

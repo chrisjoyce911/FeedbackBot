@@ -1,0 +1,11 @@
+{
+  "botbame": "Slack to HipCat",
+  "slacktoken": "",
+  "hiptoken",
+  "slackreport": ""
+  "slackreptime": 600,
+  "slackroom": "",
+  "mobilehipchat": "",
+  "webhipchat": "",
+  "Channels": [
+    {}

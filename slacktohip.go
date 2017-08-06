@@ -15,6 +15,7 @@ func main() {
 	cfg, err := LoadConfig("config.json")
 	if err != nil {
 		err = saveConfig(createMockConfig(), "config.json")
+		cfg = createMockConfig()
 		if err != nil {
 			panic(err)
 		}
@@ -35,7 +36,6 @@ func main() {
 	cfg.SlackChannel = *channelPtr
 
 	saveConfig(cfg, "config.json")
-	fmt.Printf("Config saved : %+v\n", cfg)
 
 	switch {
 	case *slackPtr == "":
@@ -44,9 +44,14 @@ func main() {
 		log.Fatalln("Hipchat token is a required argument")
 	}
 
+	for i := 0; i < len(cfg.Channels); i++ {
+		fmt.Println(cfg.Channels[i].Slack)
+	}
+
+	log.Fatalln("Stop here")
 	ws, id := slackConnect(cfg.SlackToken)
 
-	fmt.Println("mybot ready, ^C exits")
+	fmt.Printf("%s ready, ^C exits", cfg.BotName)
 
 	go func() {
 		c := time.Tick(time.Duration(cfg.SlackRepTime) * time.Second)

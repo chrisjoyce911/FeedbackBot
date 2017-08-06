@@ -15,19 +15,35 @@ type Configuration struct {
 	SlackChannel string `json:"slackroom"`
 	MobHipRoom   string `json:"mobilehipchat"`
 	WebHipRoom   string `json:"webhipchat"`
+	Channels     []Channel
+}
+
+//Channel ... source and desternation channel
+type Channel struct {
+	Slack   string `json:"slack"`
+	HipChat string `json:"hipchat"`
 }
 
 func createMockConfig() Configuration {
-	return Configuration{
+	cfg := Configuration{
 		BotName:      "Slack to HipCat",
 		SlackToken:   "",
 		HipToken:     "",
 		SlackReport:  "",
-		SlackRepTime: 360,
+		SlackRepTime: 600,
 		SlackChannel: "",
 		MobHipRoom:   "",
 		WebHipRoom:   "",
+		Channels: []Channel{
+			{
+				Slack:   "C5ADCS9FV",
+				HipChat: "Dev Test Channel"},
+			{
+				Slack:   "G6J2D2HCY",
+				HipChat: "Integration Testing"},
+		},
 	}
+	return cfg
 }
 
 //LoadConfig reads config

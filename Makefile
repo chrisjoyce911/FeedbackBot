@@ -1,6 +1,7 @@
 .PHONY: deps silent-test format test builddocker docker report
 
-all: slacktohip.out bin/slacktohip bin/mydockerbot 
+all: slacktohip.out bin/slacktohip 
+#bin/mydockerbot 
 
 docker: silent-test bin/mydockerbot builddocker
 
