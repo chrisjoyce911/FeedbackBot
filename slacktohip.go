@@ -22,7 +22,7 @@ func main() {
 	}
 
 	slackPtr := flag.String("s", cfg.SlackToken, "Slack token")
-	hipPtr := flag.String("h", cfg.HipToken, "HipChat token")
+	hipPtr := flag.String("a", cfg.HipToken, "HipChat token")
 	channelPtr := flag.String("c", cfg.SlackChannel, "Slack channel")
 	roomMobPtr := flag.String("m", cfg.MobHipRoom, "Mobile HipChat room")
 	roomWebPtr := flag.String("w", cfg.WebHipRoom, "Web HipChat room")
