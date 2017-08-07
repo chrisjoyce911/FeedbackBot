@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"reflect"
 	"testing"
 )
 
@@ -65,6 +67,31 @@ func TestSum(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Sum(tt.args.a, tt.args.b); got != tt.want {
 				t.Errorf("Sum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_processArg(t *testing.T) {
+	t.Skip("skipping test command line arg to hard")
+	type args struct {
+		configfile string
+		slackPtr   string
+	}
+	tests := []struct {
+		name string
+		args args
+		want Configuration
+	}{
+		{name: "File",
+			args: args{configfile: "config_test.json", slackPtr: "SLACK_TOKEN"},
+			want: createMockConfig()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			flag.Set("t", "SLACK_TOKEN")
+			if got := processArg(tt.args.configfile); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("processArg() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -27,19 +27,19 @@ type Channel struct {
 func createMockConfig() Configuration {
 	cfg := Configuration{
 		BotName:      "Slack to HipCat",
-		SlackToken:   "",
-		HipToken:     "",
+		SlackToken:   "SLACK_TOKEN",
+		HipToken:     "HIP_TOKEN",
 		SlackReport:  "",
 		SlackRepTime: 600,
 		SlackChannel: "",
-		MobHipRoom:   "",
-		WebHipRoom:   "",
+		MobHipRoom:   "Mobile Feedback",
+		WebHipRoom:   "Web Feedback",
 		Channels: []Channel{
 			{
-				Slack:   "C5ADCS9FV",
+				Slack:   "SLACK0101",
 				HipChat: "Dev Test Channel"},
 			{
-				Slack:   "G6J2D2HCY",
+				Slack:   "SLACK0123",
 				HipChat: "Integration Testing"},
 		},
 	}
@@ -68,4 +68,16 @@ func saveConfig(c Configuration, filename string) error {
 		return err
 	}
 	return ioutil.WriteFile(filename, bytes, 0644)
+}
+
+func getConfig(filename string) Configuration {
+	cfg, err := LoadConfig(filename)
+	if err != nil {
+		err = saveConfig(createMockConfig(), filename)
+		cfg = createMockConfig()
+		if err != nil {
+			panic(err)
+		}
+	}
+	return cfg
 }

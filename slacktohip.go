@@ -10,17 +10,9 @@ import (
 	"github.com/andybons/hipchat"
 )
 
-func main() {
+var cfg Configuration
 
-	cfg, err := LoadConfig("config.json")
-	if err != nil {
-		err = saveConfig(createMockConfig(), "config.json")
-		cfg = createMockConfig()
-		if err != nil {
-			panic(err)
-		}
-	}
-
+func processArg(configfile string) Configuration {
 	slackPtr := flag.String("s", cfg.SlackToken, "Slack token")
 	hipPtr := flag.String("a", cfg.HipToken, "HipChat token")
 	channelPtr := flag.String("c", cfg.SlackChannel, "Slack channel")
@@ -35,7 +27,7 @@ func main() {
 	cfg.WebHipRoom = *roomWebPtr
 	cfg.SlackChannel = *channelPtr
 
-	saveConfig(cfg, "config.json")
+	saveConfig(cfg, configfile)
 
 	switch {
 	case *slackPtr == "":
@@ -43,6 +35,20 @@ func main() {
 	case *hipPtr == "":
 		log.Fatalln("Hipchat token is a required argument")
 	}
+
+	return cfg
+
+}
+
+func main() {
+
+	var configfile = "config.json"
+
+	cfg = getConfig(configfile)
+
+	cfg = processArg(configfile)
+
+	log.Fatalln("Stop")
 
 	for i := 0; i < len(cfg.Channels); i++ {
 		fmt.Println(cfg.Channels[i].Slack)

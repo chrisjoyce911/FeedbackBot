@@ -13,19 +13,19 @@ func Test_createMockConfig(t *testing.T) {
 		{name: "Default",
 			want: Configuration{
 				BotName:      "Slack to HipCat",
-				SlackToken:   "",
-				HipToken:     "",
+				SlackToken:   "SLACK_TOKEN",
+				HipToken:     "HIP_TOKEN",
 				SlackReport:  "",
 				SlackRepTime: 600,
 				SlackChannel: "",
-				MobHipRoom:   "",
-				WebHipRoom:   "",
+				MobHipRoom:   "Mobile Feedback",
+				WebHipRoom:   "Web Feedback",
 				Channels: []Channel{
 					{
-						Slack:   "C5ADCS9FV",
+						Slack:   "SLACK0101",
 						HipChat: "Dev Test Channel"},
 					{
-						Slack:   "G6J2D2HCY",
+						Slack:   "SLACK0123",
 						HipChat: "Integration Testing"},
 				},
 			}},
@@ -94,6 +94,28 @@ func Test_saveConfig(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := saveConfig(tt.args.c, tt.args.filename); (err != nil) != tt.wantErr {
 				t.Errorf("saveConfig() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_getConfig(t *testing.T) {
+	type args struct {
+		filename string
+	}
+	tests := []struct {
+		name string
+		args args
+		want Configuration
+	}{
+		{name: "Existing File",
+			args: args{filename: "config_test.json"},
+			want: createMockConfig()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getConfig(tt.args.filename); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getConfig() = %v, want %v", got, tt.want)
 			}
 		})
 	}
