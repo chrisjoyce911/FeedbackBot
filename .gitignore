@@ -1,9 +1,4 @@
 
-
-bin/mydockerbot
-
-bin/slacktohip
-
 bin/slacktohip.out
 
 config.json
