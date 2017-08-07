@@ -4,6 +4,8 @@ import (
 	"flag"
 	"reflect"
 	"testing"
+
+	"github.com/andybons/hipchat"
 )
 
 func setupTestCase(t *testing.T) func(t *testing.T) {
@@ -92,6 +94,70 @@ func Test_processArg(t *testing.T) {
 			flag.Set("t", "SLACK_TOKEN")
 			if got := processArg(tt.args.configfile); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("processArg() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_forwardMessage(t *testing.T) {
+	type args struct {
+		slackChannel string
+		inthis       []Channel
+	}
+	tests := []struct {
+		name               string
+		args               args
+		wantHipchatChannel string
+		wantForward        bool
+	}{
+		{name: "Will forward",
+			args:               args{slackChannel: "SLACK0101", inthis: createMockConfig().Channels},
+			wantHipchatChannel: "Dev Test Channel",
+			wantForward:        true},
+		{name: "Will NOT forward",
+			args:               args{slackChannel: "NO_MATCH", inthis: createMockConfig().Channels},
+			wantHipchatChannel: "",
+			wantForward:        false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotHipchatChannel, gotForward := forwardMessage(tt.args.slackChannel, tt.args.inthis)
+			if gotHipchatChannel != tt.wantHipchatChannel {
+				t.Errorf("forwardMessage() gotHipchatChannel = %v, want %v", gotHipchatChannel, tt.wantHipchatChannel)
+			}
+			if gotForward != tt.wantForward {
+				t.Errorf("forwardMessage() gotForward = %v, want %v", gotForward, tt.wantForward)
+			}
+		})
+	}
+}
+
+func Test_whatBackground(t *testing.T) {
+	type args struct {
+		message string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		wantBackground string
+	}{
+		{name: "Color Green",
+			args:           args{message: "Rating: Satisfied"},
+			wantBackground: hipchat.ColorGreen},
+		{name: "Color Yellow",
+			args:           args{message: "Rating: Neutral"},
+			wantBackground: hipchat.ColorYellow},
+		{name: "Color Red",
+			args:           args{message: "Rating: Not Satisfied"},
+			wantBackground: hipchat.ColorRed},
+		{name: "Color Gray",
+			args:           args{message: "XXXVVVNNN"},
+			wantBackground: hipchat.ColorGray},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotBackground := whatBackground(tt.args.message); gotBackground != tt.wantBackground {
+				t.Errorf("whatBackground() = %v, want %v", gotBackground, tt.wantBackground)
 			}
 		})
 	}

@@ -45,14 +45,9 @@ func main() {
 	var configfile = "config.json"
 
 	cfg = getConfig(configfile)
-
 	cfg = processArg(configfile)
 
 	log.Fatalln("Stop")
-
-	for i := 0; i < len(cfg.Channels); i++ {
-		fmt.Println(cfg.Channels[i].Slack)
-	}
 
 	ws, id := slackConnect(cfg.SlackToken)
 
@@ -96,22 +91,16 @@ func main() {
 
 			if m.Type == "message" {
 				fmt.Printf("%s %s\n", m.Channel, m.Text)
-				if m.Channel == cfg.SlackChannel {
+				hip, forward := forwardMessage(m.Channel, cfg.Channels)
+
+				if forward {
 					c := hipchat.Client{AuthToken: cfg.HipToken}
+					var background = whatBackground(m.Text)
 
-					var background = "gray"
-
-					switch {
-					case strings.Contains(m.Text, "Rating: Satisfied"):
-						background = hipchat.ColorGreen
-					case strings.Contains(m.Text, "Rating: Neutral"):
-						background = hipchat.ColorYellow
-					case strings.Contains(m.Text, "Rating: Not Satisfied"):
-						background = hipchat.ColorRed
-					}
-
-					var HipRoomID = cfg.MobHipRoom
+					var HipRoomID = hip
 					if strings.Contains(m.Text, "OzLotteries for Web") {
+						HipRoomID = cfg.WebHipRoom
+					} else if strings.Contains(m.Text, "OzLotteries for Web") {
 						HipRoomID = cfg.WebHipRoom
 					}
 
@@ -130,6 +119,32 @@ func main() {
 			}
 		}
 	}
+}
+
+func whatBackground(message string) (background string) {
+	background = "gray"
+	switch {
+	case strings.Contains(message, "Rating: Satisfied"):
+		background = hipchat.ColorGreen
+	case strings.Contains(message, "Rating: Neutral"):
+		background = hipchat.ColorYellow
+	case strings.Contains(message, "Rating: Not Satisfied"):
+		background = hipchat.ColorRed
+	}
+	return background
+}
+
+func forwardMessage(slackChannel string, inthis []Channel) (hipchatChannel string, forward bool) {
+
+	for i := 0; i < len(inthis); i++ {
+		fmt.Println(inthis[i].Slack)
+		if inthis[i].Slack == slackChannel {
+			return inthis[i].HipChat, true
+		}
+
+	}
+
+	return "", false
 }
 
 // Sum .. for testing
