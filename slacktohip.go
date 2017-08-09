@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"strings"
@@ -10,48 +9,13 @@ import (
 	"github.com/andybons/hipchat"
 )
 
-var cfg Configuration
-
-func processArg(configfile string) Configuration {
-	slackPtr := flag.String("s", cfg.SlackToken, "Slack token")
-	hipPtr := flag.String("a", cfg.HipToken, "HipChat token")
-	channelPtr := flag.String("c", cfg.SlackChannel, "Slack channel")
-	roomMobPtr := flag.String("m", cfg.MobHipRoom, "Mobile HipChat room")
-	roomWebPtr := flag.String("w", cfg.WebHipRoom, "Web HipChat room")
-
-	flag.Parse()
-
-	cfg.SlackToken = *slackPtr
-	cfg.HipToken = *hipPtr
-	cfg.MobHipRoom = *roomMobPtr
-	cfg.WebHipRoom = *roomWebPtr
-	cfg.SlackChannel = *channelPtr
-
-	saveConfig(cfg, configfile)
-
-	switch {
-	case *slackPtr == "":
-		log.Fatalln("Slack token is a required argument")
-	case *hipPtr == "":
-		log.Fatalln("Hipchat token is a required argument")
-	}
-
-	return cfg
-
-}
-
 func main() {
 
-	var configfile = "config.json"
-
-	cfg = getConfig(configfile)
-	cfg = processArg(configfile)
-
-	log.Fatalln("Stop")
+	cfg := loadcfg("config.json")
 
 	ws, id := slackConnect(cfg.SlackToken)
 
-	fmt.Printf("%s ready, ^C exits", cfg.BotName)
+	fmt.Printf("%s ready, ^C exits\n", cfg.BotName)
 
 	go func() {
 		c := time.Tick(time.Duration(cfg.SlackRepTime) * time.Second)
@@ -63,7 +27,6 @@ func main() {
 			}
 			postMessage(ws, rmsg)
 		}
-
 		return
 	}()
 
@@ -72,9 +35,7 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-
 			if m.Type == "message" && strings.HasPrefix(m.Text, "<@"+id+">") {
-				// if so try to parse if
 				parts := strings.Fields(m.Text)
 				switch {
 				case len(parts) == 2 && parts[1] == "channel":
@@ -83,26 +44,18 @@ func main() {
 						postMessage(ws, m)
 					}(m)
 				default:
-					// huh?
 					m.Text = fmt.Sprintf("sorry, that does not compute\n")
 					postMessage(ws, m)
 				}
 			}
 
 			if m.Type == "message" {
-				fmt.Printf("%s %s\n", m.Channel, m.Text)
-				hip, forward := forwardMessage(m.Channel, cfg.Channels)
+				hip, background, forward := forwardMessage(m.Channel, m.Text, cfg.Channels)
 
+				fmt.Printf("From : %s\nMessage : %s\nTo Hip : %s\nBackground : %s\n", m.Channel, m.Text, hip, background)
 				if forward {
 					c := hipchat.Client{AuthToken: cfg.HipToken}
-					var background = whatBackground(m.Text)
-
 					var HipRoomID = hip
-					if strings.Contains(m.Text, "OzLotteries for Web") {
-						HipRoomID = cfg.WebHipRoom
-					} else if strings.Contains(m.Text, "OzLotteries for Web") {
-						HipRoomID = cfg.WebHipRoom
-					}
 
 					req := hipchat.MessageRequest{
 						RoomId:        HipRoomID,
@@ -121,33 +74,46 @@ func main() {
 	}
 }
 
-func whatBackground(message string) (background string) {
-	background = "gray"
-	switch {
-	case strings.Contains(message, "Rating: Satisfied"):
-		background = hipchat.ColorGreen
-	case strings.Contains(message, "Rating: Neutral"):
-		background = hipchat.ColorYellow
-	case strings.Contains(message, "Rating: Not Satisfied"):
-		background = hipchat.ColorRed
-	}
-	return background
-}
-
-func forwardMessage(slackChannel string, inthis []Channel) (hipchatChannel string, forward bool) {
+func forwardMessage(slackChannel string, message string, inthis []Channel) (hipchatChannel string, background string, forward bool) {
+	background = hipchat.ColorGray
 
 	for i := 0; i < len(inthis); i++ {
-		fmt.Println(inthis[i].Slack)
 		if inthis[i].Slack == slackChannel {
-			return inthis[i].HipChat, true
+			hipchatChannel = inthis[i].HipChat
+			for f := 0; f < len(inthis[i].RedirectRules); f++ {
+				if strings.Contains(message, inthis[i].RedirectRules[f].ContainsText) {
+					hipchatChannel = inthis[i].RedirectRules[f].HipChat
+					for b := 0; b < len(inthis[i].RedirectRules[f].BackgroundRules); b++ {
+						if strings.Contains(message, inthis[i].RedirectRules[f].BackgroundRules[b].ContainsText) {
+							background = inthis[i].RedirectRules[f].BackgroundRules[b].Background
+						}
+					}
+				}
+			}
+			return hipchatChannel, background, true
 		}
-
 	}
-
-	return "", false
+	return "", background, false
 }
 
-// Sum .. for testing
-func Sum(a, b int) int {
-	return a + b
+func loadcfg(configfile string) (cfg Configuration) {
+	cfg, err := LoadConfig(configfile)
+	if err != nil {
+		err = saveConfig(createMockConfig(), configfile)
+		cfg = createMockConfig()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	saveConfig(cfg, configfile)
+
+	switch {
+	case cfg.SlackToken == "":
+		log.Fatalln("Slack token is a required argument")
+	case cfg.HipToken == "":
+		log.Fatalln("Hipchat token is a required argument")
+	}
+
+	return cfg
 }

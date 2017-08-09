@@ -11,10 +11,19 @@
 `slacktohip` is a very simple single way cross messageing bot.
 
 ```bash
-slacktohip -s SLACK_TOKEN -h HIPCHAR_TOKEN -c CLACK_CHANNEL -m MOBILE_ROOM -w WEBROOM
+slacktohip
 ```
 
-to fins out the channel ID in slack the bot will help
-Invide your bot into the room and  message it with @yourbot channel
+## Outline
 
-THe Slack side was based on [blog post](https://www.opsdash.com/blog/slack-bot-in-golang.html)
+Bot will review any message in any channge that it has been invited into, should it be in a channel that it has a record of.
+
+If the channel is one that the bot has been configured to forared messages for it will then run redirection tests
+
+### Redirection
+
+If the message contains matching text the bot will then redirect the message to a new channel
+
+### Background
+
+Backgrounds can be set based on matching text in the message

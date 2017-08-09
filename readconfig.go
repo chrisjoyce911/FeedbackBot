@@ -12,32 +12,62 @@ type Configuration struct {
 	HipToken     string `json:"hiptoken"`
 	SlackReport  string `json:"slackreport"`
 	SlackRepTime int    `json:"slackreptime"`
-	SlackChannel string `json:"slackroom"`
-	MobHipRoom   string `json:"mobilehipchat"`
-	WebHipRoom   string `json:"webhipchat"`
 	Channels     []Channel
 }
 
 //Channel ... source and desternation channel
 type Channel struct {
-	Slack   string `json:"slack"`
-	HipChat string `json:"hipchat"`
+	Slack         string `json:"slack"`
+	HipChat       string `json:"hipchat"`
+	RedirectRules []RedirectRules
 }
 
+//RedirectRules ... if the text matches redirtect
+type RedirectRules struct {
+	HipChat         string `json:"hipchat"`
+	ContainsText    string `json:"containstext"`
+	BackgroundRules []BackgroundRules
+}
+
+//BackgroundRules ... if the text matches redirtect
+type BackgroundRules struct {
+	Background   string `json:"background"`
+	ContainsText string `json:"containstext"`
+}
+
+//createMockConfig ... will generate a default config
 func createMockConfig() Configuration {
 	cfg := Configuration{
 		BotName:      "Slack to HipCat",
 		SlackToken:   "SLACK_TOKEN",
 		HipToken:     "HIP_TOKEN",
-		SlackReport:  "",
+		SlackReport:  "SLACK_KEEPALICE_CHANNEL",
 		SlackRepTime: 600,
-		SlackChannel: "",
-		MobHipRoom:   "Mobile Feedback",
-		WebHipRoom:   "Web Feedback",
 		Channels: []Channel{
 			{
 				Slack:   "SLACK0101",
-				HipChat: "Dev Test Channel"},
+				HipChat: "Dev Test Channel",
+				RedirectRules: []RedirectRules{
+					{
+						HipChat:      "Match oneChannel",
+						ContainsText: "Match oneText",
+						BackgroundRules: []BackgroundRules{
+							{
+								Background:   "green",
+								ContainsText: "Rating: Satisfied"},
+							{
+								Background:   "yellow",
+								ContainsText: "Rating: Neutral"},
+							{
+								Background:   "red",
+								ContainsText: "Rating: Not Satisfied"},
+						},
+					},
+					{
+						HipChat:      "Match twoChannel",
+						ContainsText: "Match twoText"},
+				},
+			},
 			{
 				Slack:   "SLACK0123",
 				HipChat: "Integration Testing"},
@@ -62,6 +92,7 @@ func LoadConfig(filename string) (Configuration, error) {
 	return c, nil
 }
 
+//saveConfig ... saves config to file
 func saveConfig(c Configuration, filename string) error {
 	bytes, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
@@ -70,6 +101,7 @@ func saveConfig(c Configuration, filename string) error {
 	return ioutil.WriteFile(filename, bytes, 0644)
 }
 
+//getConfig ... load config to file
 func getConfig(filename string) Configuration {
 	cfg, err := LoadConfig(filename)
 	if err != nil {

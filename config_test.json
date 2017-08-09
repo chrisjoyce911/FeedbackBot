@@ -2,19 +2,42 @@
   "botbame": "Slack to HipCat",
   "slacktoken": "SLACK_TOKEN",
   "hiptoken": "HIP_TOKEN",
-  "slackreport": "",
+  "slackreport": "SLACK_KEEPALICE_CHANNEL",
   "slackreptime": 600,
-  "slackroom": "",
-  "mobilehipchat": "Mobile Feedback",
-  "webhipchat": "Web Feedback",
   "Channels": [
     {
       "slack": "SLACK0101",
-      "hipchat": "Dev Test Channel"
+      "hipchat": "Dev Test Channel",
+      "RedirectRules": [
+        {
+          "hipchat": "Match oneChannel",
+          "containstext": "Match oneText",
+          "BackgroundRules": [
+            {
+              "background": "green",
+              "containstext": "Rating: Satisfied"
+            },
+            {
+              "background": "yellow",
+              "containstext": "Rating: Neutral"
+            },
+            {
+              "background": "red",
+              "containstext": "Rating: Not Satisfied"
+            }
+          ]
+        },
+        {
+          "hipchat": "Match twoChannel",
+          "containstext": "Match twoText",
+          "BackgroundRules": null
+        }
+      ]
     },
     {
       "slack": "SLACK0123",
-      "hipchat": "Integration Testing"
+      "hipchat": "Integration Testing",
+      "RedirectRules": null
     }
   ]
 }

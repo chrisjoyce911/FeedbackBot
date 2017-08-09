@@ -15,15 +15,33 @@ func Test_createMockConfig(t *testing.T) {
 				BotName:      "Slack to HipCat",
 				SlackToken:   "SLACK_TOKEN",
 				HipToken:     "HIP_TOKEN",
-				SlackReport:  "",
+				SlackReport:  "SLACK_KEEPALICE_CHANNEL",
 				SlackRepTime: 600,
-				SlackChannel: "",
-				MobHipRoom:   "Mobile Feedback",
-				WebHipRoom:   "Web Feedback",
 				Channels: []Channel{
 					{
 						Slack:   "SLACK0101",
-						HipChat: "Dev Test Channel"},
+						HipChat: "Dev Test Channel",
+						RedirectRules: []RedirectRules{
+							{
+								HipChat:      "Match oneChannel",
+								ContainsText: "Match oneText",
+								BackgroundRules: []BackgroundRules{
+									{
+										Background:   "green",
+										ContainsText: "Rating: Satisfied"},
+									{
+										Background:   "yellow",
+										ContainsText: "Rating: Neutral"},
+									{
+										Background:   "red",
+										ContainsText: "Rating: Not Satisfied"},
+								},
+							},
+							{
+								HipChat:      "Match twoChannel",
+								ContainsText: "Match twoText"},
+						},
+					},
 					{
 						Slack:   "SLACK0123",
 						HipChat: "Integration Testing"},
@@ -59,6 +77,10 @@ func TestLoadConfig(t *testing.T) {
 			wantErr: true},
 		{name: "Bad JSON",
 			args:    args{filename: "config_bad_test.json"},
+			want:    Configuration{},
+			wantErr: true},
+		{name: "No file",
+			args:    args{filename: ""},
 			want:    Configuration{},
 			wantErr: true},
 	}
