@@ -1,10 +1,2 @@
-
-bin/slacktohip.out
-
 config.json
-
-.vscode/launch.json
-
-bin/mydockerbot
-
-bin/slacktohip
+bin/*

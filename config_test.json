@@ -1,12 +1,8 @@
 {
-  "botbame": "Slack to HipCat",
-  "slacktoken": "SLACK_TOKEN",
+  "botbame": "Kafka to HipCat",
   "hiptoken": "HIP_TOKEN",
-  "slackreport": "SLACK_KEEPALICE_CHANNEL",
-  "slackreptime": 600,
   "Channels": [
     {
-      "slack": "SLACK0101",
       "hipchat": "Dev Test Channel",
       "RedirectRules": [
         {
@@ -35,7 +31,6 @@
       ]
     },
     {
-      "slack": "SLACK0123",
       "hipchat": "Integration Testing",
       "RedirectRules": null
     }

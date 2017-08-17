@@ -5,19 +5,23 @@ import (
 	"io/ioutil"
 )
 
+// Message ...
+type Message struct {
+	ID      uint64 `json:"id"`
+	Type    string `json:"type"`
+	Channel string `json:"channel"`
+	Text    string `json:"text"`
+}
+
 // Configuration ... not sure how this will work yet
 type Configuration struct {
-	BotName      string `json:"botbame"`
-	SlackToken   string `json:"slacktoken"`
-	HipToken     string `json:"hiptoken"`
-	SlackReport  string `json:"slackreport"`
-	SlackRepTime int    `json:"slackreptime"`
-	Channels     []Channel
+	BotName  string `json:"botbame"`
+	HipToken string `json:"hiptoken"`
+	Channels []Channel
 }
 
 //Channel ... source and desternation channel
 type Channel struct {
-	Slack         string `json:"slack"`
 	HipChat       string `json:"hipchat"`
 	RedirectRules []RedirectRules
 }
@@ -38,14 +42,10 @@ type BackgroundRules struct {
 //createMockConfig ... will generate a default config
 func createMockConfig() Configuration {
 	cfg := Configuration{
-		BotName:      "Slack to HipCat",
-		SlackToken:   "SLACK_TOKEN",
-		HipToken:     "HIP_TOKEN",
-		SlackReport:  "SLACK_KEEPALICE_CHANNEL",
-		SlackRepTime: 600,
+		BotName:  "Kafka to HipCat",
+		HipToken: "HIP_TOKEN",
 		Channels: []Channel{
 			{
-				Slack:   "SLACK0101",
 				HipChat: "Dev Test Channel",
 				RedirectRules: []RedirectRules{
 					{
@@ -69,7 +69,6 @@ func createMockConfig() Configuration {
 				},
 			},
 			{
-				Slack:   "SLACK0123",
 				HipChat: "Integration Testing"},
 		},
 	}
