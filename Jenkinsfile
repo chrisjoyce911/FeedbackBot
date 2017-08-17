@@ -33,6 +33,8 @@ pipeline {
                 echo 'and would like to enjoy the value you have just added'
                 echo 'Deploy to staging sites .. with some auto foo'
                 echo 'Deploy to live  .. with some auto foo'
+                
+                echo 'docker-compose up -d --no-deps --build kafkatohip'
             }
         }
     }
