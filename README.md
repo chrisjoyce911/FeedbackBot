@@ -1,4 +1,4 @@
-# Slack to HipChat
+# Kafka to HipChat
 
 [![Build Status](https://travis-ci.org/chrisjoyce911/slacktohip.svg?branch=master)](https://travis-ci.org/chrisjoyce911/slacktohip)
 [![Coverage Status](https://coveralls.io/repos/github/chrisjoyce911/slacktohip/badge.svg?branch=master)](https://coveralls.io/github/chrisjoyce911/slacktohip?branch=master)
@@ -8,7 +8,7 @@
 [![Github Issues](http://githubbadges.herokuapp.com/chrisjoyce911/slacktohip/issues.svg?style=flat-square)](https://github.com/chrisjoyce911/slacktohip/issues)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/chrisjoyce911/slacktohip/pulls.svg?style=flat-square)](https://github.com/chrisjoyce911/slacktohip/pulls)
 
-`slacktohip` is a very simple single way cross messageing bot.
+`kafkatohip` is a very simple single way cross messageing bot.
 
 ```bash
 slacktohip
