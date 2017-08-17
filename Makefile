@@ -1,21 +1,22 @@
-.PHONY: deps silent-test format test builddocker docker report
+.PHONY: all docker deps silent-test format test report
 
-all: slacktohip.out bin/slacktohip bin/mydockerbot 
+all: format kafkatohip.out bin/kafkatohip
 
-docker: silent-test bin/mydockerbot builddocker
+docker: silent-test bin/docker-kafkatohip bin/.docker-kafkatohip
 
-bin/slacktohip: slacktohip.go slack.go
-	go build -o bin/slacktohip .
+kafkatohip.out: kafkatohip_test.go readconfig.go
+	go test -coverprofile=bin/kafkatohip.out
 
-bin/mydockerbot: slack.go slacktohip.go
-	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/mydockerbot .
+bin/kafkatohip: kafkatohip_test.go readconfig.go
+	go build -o bin/kafkatohip .
 
-slacktohip.out: slacktohip_test.go slack_test.go
-	go test -coverprofile=bin/slacktohip.out
+bin/docker-kafkatohip: kafkatohip.go readconfig.go
+	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/docker-kafkatohip .
 
-builddocker:
+bin/.docker-kafkatohip: kafkatohip bin/docker-kafkatohip Dockerfile
 	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem \
-	docker build -t slacktohip -f Dockerfile .
+	docker build -t kafkatohip -f Dockerfile .
+	touch bin/.docker-kafkatohip
 
 test:
 	go test -v -cover ./...
@@ -30,4 +31,4 @@ deps:
 	go get -v ./...
 
 report:
-	go tool cover -html=bin/slacktohip.out
+	go tool cover -html=bin/kafkatohip.out

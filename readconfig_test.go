@@ -12,14 +12,10 @@ func Test_createMockConfig(t *testing.T) {
 	}{
 		{name: "Default",
 			want: Configuration{
-				BotName:      "Slack to HipCat",
-				SlackToken:   "SLACK_TOKEN",
-				HipToken:     "HIP_TOKEN",
-				SlackReport:  "SLACK_KEEPALICE_CHANNEL",
-				SlackRepTime: 600,
+				BotName:  "Kafka to HipCat",
+				HipToken: "HIP_TOKEN",
 				Channels: []Channel{
 					{
-						Slack:   "SLACK0101",
 						HipChat: "Dev Test Channel",
 						RedirectRules: []RedirectRules{
 							{
@@ -43,7 +39,6 @@ func Test_createMockConfig(t *testing.T) {
 						},
 					},
 					{
-						Slack:   "SLACK0123",
 						HipChat: "Integration Testing"},
 				},
 			}},
