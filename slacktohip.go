@@ -33,7 +33,7 @@ func main() {
 	for {
 		m, err := getMessage(ws)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatalln("Unable to get message: ", err)
 		} else {
 			if m.Type == "message" && strings.HasPrefix(m.Text, "<@"+id+">") {
 				parts := strings.Fields(m.Text)
