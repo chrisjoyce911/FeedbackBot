@@ -20,3 +20,23 @@ If the message contains matching text the bot will then redirect the message to 
 ### Background
 
 Backgrounds can be set based on matching text in the message
+
+### ToDo
+
+Finish developemnt
+
+    - This was based on a working slack to hip version
+    - Kafka consumer looks ok
+    - Handling of config needs to be updated
+    - managment of HipChat token needs resolving
+    - Autostart and restarting handling of docker
+
+Create a working Continuous Integration process
+
+    - Should be deployed after merging
+    - Staging sites first then production
+
+How do we display a code coverage report in Jenkins
+
+    - [Jenknis golang coverage plugin](https://github.com/envimate/golang-coverage-report)
+    - [Convert to junit format](https://github.com/AlekSi/gocov-xml)
