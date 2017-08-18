@@ -1,0 +1,26 @@
+{
+    "event_type": "feedback_event",
+    "name": "feedback event",
+    "category": "mobile feedback",
+    "client_information": {
+        "name": "Ozlotteries for Android",
+        "version": "4.9.4",
+        "build": "release",
+        "client_platform": {
+            "name": "Android",
+            "version": "7.1.1"
+        },
+        "client_device": {
+            "class": "phone",
+            "manufacturer": "Samsung",
+            "model": "Galaxy S8"
+        },
+        "client_environment": {
+            "timezone": "Australia/Brisbane",
+            "locale": "en_AU"
+        }
+    },
+    "rating": "' . $rating . '",
+    "comment": "App is biased and does not draw my numbers. I can never win!!",
+    "source": "feedback"
+}

@@ -1,6 +1,8 @@
 {
   "botbame": "Kafka to HipCat",
-  "hiptoken": "HIP_TOKEN",
+  "broker": "127.0.0.1:9092",
+  "topic": "my_topic",
+  "groupid": "feedback_to_hipchat",
   "Channels": [
     {
       "hipchat": "Dev Test Channel",
