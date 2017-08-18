@@ -1,0 +1,4 @@
+kafkatohip:
+    image: kafkatohip
+    volumes:
+        - ./kafkatohip.conf:/kafkatohip/nginx.conf
