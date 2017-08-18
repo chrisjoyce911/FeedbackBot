@@ -5,19 +5,76 @@ import (
 	"io/ioutil"
 )
 
-// Message ...
-type Message struct {
-	ID      uint64 `json:"id"`
-	Type    string `json:"type"`
-	Channel string `json:"channel"`
-	Text    string `json:"text"`
+// FeedbackEvent ... Holds a customer feedback
+type FeedbackEvent struct {
+	EventType         string `json:"event_type"`
+	Name              string `json:"name"`
+	Category          string `json:"category"`
+	Rating            string `json:"rating"`
+	Comment           string `json:"comment"`
+	Source            string `json:"source"`
+	ClientInformation ClientInformation
+	ClientPlatform    ClientPlatform
+	ClientDevice      ClientDevice
+	ClientEnvironment ClientEnvironment
 }
+
+// ClientInformation ... About the device the feedback was sourced on
+type ClientInformation struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Build   string `json:"build"`
+}
+
+// ClientPlatform ... About the version of app
+type ClientPlatform struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+// ClientDevice ... About the device the feedback was sourced on
+type ClientDevice struct {
+	Class        string `json:"class"`
+	Manufacturer string `json:"manufacturer"`
+	Model        string `json:"model"`
+}
+
+// ClientEnvironment ... what timezone is the clinet in ?
+type ClientEnvironment struct {
+	Timezone string `json:"timezone"`
+	Locale   string `json:"locale"`
+}
+
+/*
+{
+   "event_type":"feedback_event",
+   "name":"feedback event",
+   "category":"mobile feedback",
+   "client_information":{
+      "name":"Ozlotteries for Android",
+      "version":"4.9.4",
+      "build":"release",
+      "client_platform":{"name":"Android","version":"7.1.1"},
+      "client_device":{"class":"phone","manufacturer":"Samsung","model":"Galaxy S8"},
+      "client_environment":{"timezone":"Australia/Brisbane","locale":"en_AU"}},
+   "rating":"' . $rating . '",
+   "comment":"App is biased and does not draw my numbers. I can never win!!",
+   "source":"feedback"
+}
+*/
 
 // Configuration ... not sure how this will work yet
 type Configuration struct {
 	BotName  string `json:"botbame"`
-	HipToken string `json:"hiptoken"`
+	Broker   string `json:"broker"`
+	Topic    string `json:"topic"`
+	GroupID  string `json:"groupid"`
 	Channels []Channel
+}
+
+// Token  ... As the HipChat token will be sorted in encoded josn we handle it in a different way
+type Token struct {
+	HipToken string `json:"hiptoken"`
 }
 
 //Channel ... source and desternation channel
@@ -42,8 +99,10 @@ type BackgroundRules struct {
 //createMockConfig ... will generate a default config
 func createMockConfig() Configuration {
 	cfg := Configuration{
-		BotName:  "Kafka to HipCat",
-		HipToken: "HIP_TOKEN",
+		BotName: "Kafka to HipCat",
+		Broker:  "127.0.0.1:9092",
+		Topic:   "my_topic",
+		GroupID: "feedback_to_hipchat",
 		Channels: []Channel{
 			{
 				HipChat: "Dev Test Channel",
@@ -76,8 +135,8 @@ func createMockConfig() Configuration {
 }
 
 //LoadConfig reads config
-func LoadConfig(filename string) (Configuration, error) {
-	bytes, err := ioutil.ReadFile(filename)
+func LoadConfig(configfilename string) (Configuration, error) {
+	bytes, err := ioutil.ReadFile(configfilename)
 	if err != nil {
 		return Configuration{}, err
 	}
@@ -91,6 +150,22 @@ func LoadConfig(filename string) (Configuration, error) {
 	return c, nil
 }
 
+//LoadToken .. Loads HipChat token
+func LoadToken(tokenfilename string) (Token, error) {
+	bytes, err := ioutil.ReadFile(tokenfilename)
+	if err != nil {
+		return Token{}, err
+	}
+
+	var t Token
+	err = json.Unmarshal(bytes, &t)
+	if err != nil {
+		return Token{}, err
+	}
+
+	return t, nil
+}
+
 //saveConfig ... saves config to file
 func saveConfig(c Configuration, filename string) error {
 	bytes, err := json.MarshalIndent(c, "", "  ")
@@ -100,15 +175,11 @@ func saveConfig(c Configuration, filename string) error {
 	return ioutil.WriteFile(filename, bytes, 0644)
 }
 
-//getConfig ... load config to file
-func getConfig(filename string) Configuration {
-	cfg, err := LoadConfig(filename)
+//saveToken ... saves hipchat token to file
+func saveToken(c Token, filename string) error {
+	bytes, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
-		err = saveConfig(createMockConfig(), filename)
-		cfg = createMockConfig()
-		if err != nil {
-			panic(err)
-		}
+		return err
 	}
-	return cfg
+	return ioutil.WriteFile(filename, bytes, 0644)
 }

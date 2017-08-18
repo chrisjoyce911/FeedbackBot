@@ -1,31 +1,8 @@
 package main
 
 import (
-	"reflect"
 	"testing"
 )
-
-func Test_loadcfg(t *testing.T) {
-	type args struct {
-		configfile string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantCfg Configuration
-	}{
-		{name: "Good config",
-			args:    args{configfile: "config_test.json"},
-			wantCfg: createMockConfig()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotCfg := loadcfg(tt.args.configfile); !reflect.DeepEqual(gotCfg, tt.wantCfg) {
-				t.Errorf("loadcfg() = %v, want %v", gotCfg, tt.wantCfg)
-			}
-		})
-	}
-}
 
 // func Test_main(t *testing.T) {
 // 	tests := []struct {

@@ -13,16 +13,22 @@ import (
 
 func main() {
 
-	cfg := loadcfg("config.json")
+	cfg, err := LoadConfig("config.json")
+	if err != nil {
+		panic(err)
+	}
+
+	token, err := LoadToken("hipchat.json")
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("%s ready, ^C exits\n", cfg.BotName)
 
 	// this is just a placeholder for waht a message may looklike
-	m := Message{
-		ID:      1234,
-		Type:    "mobile",
-		Channel: "channel",
-		Text:    "Text ",
+	f := FeedbackEvent{
+		Category: "mobile feedback",
+		Comment:  "Text ",
 	}
 
 	// init (custom) config, enable errors and notifications
@@ -31,8 +37,8 @@ func main() {
 	kafkaConfig.Group.Return.Notifications = true
 
 	// init consumer
-	brokers := []string{"127.0.0.1:9092"}
-	topics := []string{"my_topic"}
+	brokers := []string{cfg.Broker}
+	topics := []string{cfg.Topic}
 	consumer, err := kafka.NewConsumer(brokers, "customer-feedback-tohipchat-group", topics, kafkaConfig)
 	if err != nil {
 		panic(err)
@@ -50,26 +56,24 @@ func main() {
 			if more {
 				fmt.Fprintf(os.Stdout, "%s/%d/%d\t%s\t%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
 
-				// will some rework
-				if m.Type == "message" {
-					hip, background, forward := forwardMessage(m.Text, cfg.Channels)
+				// will need some rework
+				hip, background, forward := forwardMessage(f.Comment, cfg.Channels)
 
-					fmt.Printf("From : %s\nMessage : %s\nTo Hip : %s\nBackground : %s\n", m.Channel, m.Text, hip, background)
-					if forward {
-						c := hipchat.Client{AuthToken: cfg.HipToken}
-						var HipRoomID = hip
+				fmt.Printf("From : %s\nMessage : %s\nTo Hip : %s\nBackground : %s\n", f.Category, f.Comment, hip, background)
+				if forward {
+					c := hipchat.Client{AuthToken: token.HipToken}
+					var HipRoomID = hip
 
-						req := hipchat.MessageRequest{
-							RoomId:        HipRoomID,
-							From:          cfg.BotName,
-							Message:       m.Text,
-							Color:         background,
-							MessageFormat: hipchat.FormatText,
-							Notify:        true,
-						}
-						if err := c.PostMessage(req); err != nil {
-							log.Fatalln("Expected no error, but got %q", err)
-						}
+					req := hipchat.MessageRequest{
+						RoomId:        HipRoomID,
+						From:          cfg.BotName,
+						Message:       f.Comment,
+						Color:         background,
+						MessageFormat: hipchat.FormatText,
+						Notify:        true,
+					}
+					if err := c.PostMessage(req); err != nil {
+						log.Fatalln("Expected no error, but got %q", err)
 					}
 				}
 				// mark message as processed
@@ -107,24 +111,4 @@ func forwardMessage(message string, inthis []Channel) (hipchatChannel string, ba
 		return hipchatChannel, background, true
 	}
 	return "", background, false
-}
-
-func loadcfg(configfile string) (cfg Configuration) {
-	cfg, err := LoadConfig(configfile)
-	if err != nil {
-		err = saveConfig(createMockConfig(), configfile)
-		cfg = createMockConfig()
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	saveConfig(cfg, configfile)
-
-	switch {
-	case cfg.HipToken == "":
-		log.Fatalln("Hipchat token is a required argument")
-	}
-
-	return cfg
 }
