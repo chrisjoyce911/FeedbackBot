@@ -159,3 +159,24 @@ func TestLoadToken(t *testing.T) {
 		})
 	}
 }
+
+func Test_saveToken(t *testing.T) {
+	type args struct {
+		c        Token
+		filename string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := saveToken(tt.args.c, tt.args.filename); (err != nil) != tt.wantErr {
+				t.Errorf("saveToken() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
