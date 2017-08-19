@@ -21,6 +21,7 @@ pipeline {
         stage('Publish') {
             steps {
                 echo 'Publishing....'
+                echo 'Do we need some type of version taging ?'
                 docker tag kafkatohip registry.dev.benon.com:5000/kafkatohip
                 docker push registry.dev.benon.com:5000/kafkatohip
             }
@@ -33,7 +34,9 @@ pipeline {
                 echo 'and would like to enjoy the value you have just added'
                 echo 'Deploy to staging sites .. with some auto foo'
                 echo 'Deploy to live  .. with some auto foo'
-                
+                echo ''
+                echo 'If you used ansiable to deploy did you look at http://docs.ansible.com/ansible/latest/hipchat_module.html'
+                echo 'I think this is the compose to update a running docker ?'
                 echo 'docker-compose up -d --no-deps --build kafkatohip'
             }
         }
