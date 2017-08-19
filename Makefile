@@ -13,7 +13,7 @@ bin/kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go messageman
 bin/docker-kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/docker-kafkatohip .
 
-bin/.docker-kafkatohip: kafkatohip bin/docker-kafkatohip Dockerfile
+bin/.docker-kafkatohip: bin/kafkatohip bin/docker-kafkatohip Dockerfile
 	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem \
 	docker build -t kafkatohip -f Dockerfile .
 	touch bin/.docker-kafkatohip
