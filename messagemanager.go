@@ -105,8 +105,8 @@ func SetRoom(f FeedbackEvent, cfg Configuration) FeedbackEvent {
 // FormatMessage ... Make a nice layout
 func FormatMessage(f FeedbackEvent) FeedbackEvent {
 
-	thismsg := fmt.Sprintf("(awesome)  %s\tCustomerID : %s\t Source : %s\n%s\n", f.Rating, f.CustomerID, f.Source, f.Comment)
-	thismsg = fmt.Sprintf("%s\n%s\n", thismsg, f.ClientInformation)
+	thismsg := fmt.Sprintf("%s\tCustomerID : %s\t Source : %s\n%s\n", f.Rating, f.CustomerID, f.Source, f.Comment)
+	thismsg = fmt.Sprintf("%s\n", thismsg)
 
 	f.HipChat.FormatedMsg = thismsg
 	return f

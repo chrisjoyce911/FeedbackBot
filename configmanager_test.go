@@ -147,12 +147,30 @@ func Test_saveToken(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{name: "Save Default",
+			args:    args{c: createMockToken(), filename: "test_configs/test_token.json"},
+			wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := saveToken(tt.args.c, tt.args.filename); (err != nil) != tt.wantErr {
 				t.Errorf("saveToken() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_createMockToken(t *testing.T) {
+	tests := []struct {
+		name string
+		want Token
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := createMockToken(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("createMockToken() = %v, want %v", got, tt.want)
 			}
 		})
 	}
