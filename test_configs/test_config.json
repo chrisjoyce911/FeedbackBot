@@ -3,38 +3,7 @@
   "broker": "127.0.0.1:9092",
   "topic": "my_topic",
   "groupid": "feedback_to_hipchat",
-  "Channels": [
-    {
-      "hipchat": "Dev Test Channel",
-      "RedirectRules": [
-        {
-          "hipchat": "Match oneChannel",
-          "containstext": "Match oneText",
-          "BackgroundRules": [
-            {
-              "background": "green",
-              "containstext": "Rating: Satisfied"
-            },
-            {
-              "background": "yellow",
-              "containstext": "Rating: Neutral"
-            },
-            {
-              "background": "red",
-              "containstext": "Rating: Not Satisfied"
-            }
-          ]
-        },
-        {
-          "hipchat": "Match twoChannel",
-          "containstext": "Match twoText",
-          "BackgroundRules": null
-        }
-      ]
-    },
-    {
-      "hipchat": "Integration Testing",
-      "RedirectRules": null
-    }
-  ]
+  "release_app": "Integration Testing",
+  "release_web": "Integration Testing",
+  "development": "Integration Testing"
 }

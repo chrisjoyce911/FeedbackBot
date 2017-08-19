@@ -12,38 +12,15 @@ func Test_createMockConfig(t *testing.T) {
 	}{
 		{name: "Default",
 			want: Configuration{
-				BotName: "Kafka to HipCat",
-				Broker:  "127.0.0.1:9092",
-				Topic:   "my_topic",
-				GroupID: "feedback_to_hipchat",
-				Channels: []Channel{
-					{
-						HipChat: "Dev Test Channel",
-						RedirectRules: []RedirectRules{
-							{
-								HipChat:      "Match oneChannel",
-								ContainsText: "Match oneText",
-								BackgroundRules: []BackgroundRules{
-									{
-										Background:   "green",
-										ContainsText: "Rating: Satisfied"},
-									{
-										Background:   "yellow",
-										ContainsText: "Rating: Neutral"},
-									{
-										Background:   "red",
-										ContainsText: "Rating: Not Satisfied"},
-								},
-							},
-							{
-								HipChat:      "Match twoChannel",
-								ContainsText: "Match twoText"},
-						},
-					},
-					{
-						HipChat: "Integration Testing"},
-				},
-			}},
+				BotName:     "Kafka to HipCat",
+				Broker:      "127.0.0.1:9092",
+				Topic:       "my_topic",
+				GroupID:     "feedback_to_hipchat",
+				ReleseApp:   "Integration Testing",
+				ReleseWeb:   "Integration Testing",
+				Development: "Integration Testing",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -135,8 +112,8 @@ func TestLoadToken(t *testing.T) {
 			wantErr: false},
 		{name: "Fail to Load",
 			args:    args{tokenfilename: "test_configs/test_tokenXXXX.json"},
-			want:    Token{},
-			wantErr: true},
+			want:    Token{HipToken: "HipCat-Token"},
+			wantErr: false},
 		{name: "Bad JSON",
 			args:    args{tokenfilename: "test_configs/test_config_bad.json"},
 			want:    Token{},

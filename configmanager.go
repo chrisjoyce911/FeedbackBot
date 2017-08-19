@@ -7,11 +7,13 @@ import (
 
 // Configuration ... not sure how this will work yet
 type Configuration struct {
-	BotName  string `json:"botbame"`
-	Broker   string `json:"broker"`
-	Topic    string `json:"topic"`
-	GroupID  string `json:"groupid"`
-	Channels []Channel
+	BotName     string `json:"botbame"`
+	Broker      string `json:"broker"`
+	Topic       string `json:"topic"`
+	GroupID     string `json:"groupid"`
+	ReleseApp   string `json:"release_app"`
+	ReleseWeb   string `json:"release_web"`
+	Development string `json:"development"`
 }
 
 // Token  ... As the HipChat token will be sorted in encoded josn we handle it in a different way
@@ -19,61 +21,26 @@ type Token struct {
 	HipToken string `json:"hiptoken"`
 }
 
-//Channel ... source and desternation channel
-type Channel struct {
-	HipChat       string `json:"hipchat"`
-	RedirectRules []RedirectRules
-}
-
-//RedirectRules ... if the text matches redirtect
-type RedirectRules struct {
-	HipChat         string `json:"hipchat"`
-	ContainsText    string `json:"containstext"`
-	BackgroundRules []BackgroundRules
-}
-
-//BackgroundRules ... if the text matches redirtect
-type BackgroundRules struct {
-	Background   string `json:"background"`
-	ContainsText string `json:"containstext"`
-}
-
 //createMockConfig ... will generate a default config
 func createMockConfig() Configuration {
 	cfg := Configuration{
-		BotName: "Kafka to HipCat",
-		Broker:  "127.0.0.1:9092",
-		Topic:   "my_topic",
-		GroupID: "feedback_to_hipchat",
-		Channels: []Channel{
-			{
-				HipChat: "Dev Test Channel",
-				RedirectRules: []RedirectRules{
-					{
-						HipChat:      "Match oneChannel",
-						ContainsText: "Match oneText",
-						BackgroundRules: []BackgroundRules{
-							{
-								Background:   "green",
-								ContainsText: "Rating: Satisfied"},
-							{
-								Background:   "yellow",
-								ContainsText: "Rating: Neutral"},
-							{
-								Background:   "red",
-								ContainsText: "Rating: Not Satisfied"},
-						},
-					},
-					{
-						HipChat:      "Match twoChannel",
-						ContainsText: "Match twoText"},
-				},
-			},
-			{
-				HipChat: "Integration Testing"},
-		},
+		BotName:     "Kafka to HipCat",
+		Broker:      "127.0.0.1:9092",
+		Topic:       "my_topic",
+		GroupID:     "feedback_to_hipchat",
+		ReleseApp:   "Integration Testing",
+		ReleseWeb:   "Integration Testing",
+		Development: "Integration Testing",
 	}
 	return cfg
+}
+
+//createMockToken ... will generate a default config
+func createMockToken() Token {
+	t := Token{
+		HipToken: "HIP_TOKEN",
+	}
+	return t
 }
 
 //LoadConfig reads config
@@ -96,6 +63,11 @@ func LoadConfig(configfilename string) (Configuration, error) {
 func LoadToken(tokenfilename string) (Token, error) {
 	bytes, err := ioutil.ReadFile(tokenfilename)
 	if err != nil {
+		t := createMockToken()
+		terr := saveToken(t, tokenfilename)
+		if terr != nil {
+			return Token{}, terr
+		}
 		return Token{}, err
 	}
 
@@ -118,8 +90,8 @@ func saveConfig(c Configuration, filename string) error {
 }
 
 //saveToken ... saves hipchat token to file
-func saveToken(c Token, filename string) error {
-	bytes, err := json.MarshalIndent(c, "", "  ")
+func saveToken(t Token, filename string) error {
+	bytes, err := json.MarshalIndent(t, "", "  ")
 	if err != nil {
 		return err
 	}

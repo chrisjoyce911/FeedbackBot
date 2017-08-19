@@ -9,8 +9,8 @@ import (
 	kafka "github.com/bsm/sarama-cluster"
 )
 
-//FeedBackConsumer ... collects feedback handing back ti main to process
-func FeedBackConsumer(cfg Configuration, messages chan string) {
+//FeedBackConsumer ... collects feedback handing back to main to process
+func FeedBackConsumer(cfg Configuration, messages chan []byte) {
 
 	// init (custom) config, enable errors and notifications
 	kafkaConfig := kafka.NewConfig()
@@ -35,18 +35,8 @@ func FeedBackConsumer(cfg Configuration, messages chan string) {
 		select {
 		case msg, more := <-consumer.Messages():
 			if more {
-				fmt.Fprintf(os.Stdout, "%s/%d/%d\t%s\t%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
-
-				// // will need some rework
-				// f.HipChat.Room, f.HipChat.Background = forwardMessage(f.Comment, cfg.Channels)
-
-				// SendToHipChat(f, cfg, token)
-				// if err != nil {
-				// 	panic(err)
-				// }
-				// mark message as processed
-				messages <- "ping"
-
+				fmt.Fprintf(os.Stdout, "%s/%d/%d\t%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Key)
+				messages <- msg.Value
 				consumer.MarkOffset(msg, "")
 			}
 		case err, more := <-consumer.Errors():
@@ -58,7 +48,10 @@ func FeedBackConsumer(cfg Configuration, messages chan string) {
 				log.Printf("Rebalanced: %+v\n", ntf)
 			}
 		case <-signals:
+			messages <- []byte("consumer-quit")
 			return
 		}
+
 	}
+
 }

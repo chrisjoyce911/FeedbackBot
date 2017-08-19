@@ -20,7 +20,7 @@
             "locale": "en_AU"
         }
     },
-    "rating": "' . $rating . '",
+    "rating": "Satisfied",
     "comment": "App is biased and does not draw my numbers. I can never win!!",
     "source": "feedback"
 }

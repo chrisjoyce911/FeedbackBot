@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -12,28 +13,43 @@ func main() {
 		panic(err)
 	}
 
-	// token, err := LoadToken("hipchat.json")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	token, err := LoadToken("hipchat.json")
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("%s ready, ^C exits\n", cfg.BotName)
 
-	// this is just a placeholder for what a message may look like
-	// f := FeedbackEvent{
-	// 	Category: "mobile feedback",
-	// 	Comment:  "Text ",
-	// }
-
-	messages := make(chan string)
+	messages := make(chan []byte)
 
 	go FeedBackConsumer(cfg, messages)
 
-	for i := 0; i < 2; i++ {
+	consumerOK := true
+	for consumerOK == true {
 		select {
 		case msg := <-messages:
-			fmt.Println("received", msg)
-			time.Sleep(time.Second * 1)
+			if string(msg) == "consumer-quit" {
+				time.Sleep(500 * time.Millisecond)
+				consumerOK = false
+			} else {
+				// fmt.Println("received : ", string(msg))
+
+				var f FeedbackEvent
+				err = json.Unmarshal(msg, &f)
+				if err != nil {
+					fmt.Println("Had an error : ", err)
+				}
+
+				f = SetBackground(f)
+				f = SetRoom(f, cfg)
+				f = FormatMessage(f)
+				err = SendToHipChat(f, cfg, token)
+				if err != nil {
+					panic(err)
+				}
+
+			}
+
 		}
 	}
 
