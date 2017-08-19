@@ -1,22 +1,25 @@
 .PHONY: all docker deps silent-test format test report
 
-all: format kafkatohip.out bin/kafkatohip .git/hooks/pre-commit
+all: format kafkatohip.out bin/kafkatohip .git/hooks/pre-commit bin/kafka-console-producer
 
 docker: silent-test bin/docker-kafkatohip bin/.docker-kafkatohip
 
-kafkatohip.out: kafkatohip_test.go readconfig.go
+kafkatohip.out: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	go test -coverprofile=bin/kafkatohip.out
 
-bin/kafkatohip: kafkatohip_test.go readconfig.go
+bin/kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	go build -o bin/kafkatohip .
 
-bin/docker-kafkatohip: kafkatohip.go readconfig.go
+bin/docker-kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/docker-kafkatohip .
 
 bin/.docker-kafkatohip: kafkatohip bin/docker-kafkatohip Dockerfile
 	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem \
 	docker build -t kafkatohip -f Dockerfile .
 	touch bin/.docker-kafkatohip
+
+bin/kafka-console-producer: kafka-console-producer/kafka-console-producer.go
+	go build -o bin/kafka-console-producer kafka-console-producer/kafka-console-producer.go
 
 .git/hooks/pre-commit: pre-commit
 	ln -s ../../pre-commit .git/hooks/pre-commit
