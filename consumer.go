@@ -22,6 +22,7 @@ func FeedBackConsumer(cfg Configuration, messages chan []byte) {
 	topics := []string{cfg.Topic}
 	consumer, err := kafka.NewConsumer(brokers, cfg.GroupID, topics, kafkaConfig)
 	if err != nil {
+		log.Fatalln("Had an error : ", err)
 		panic(err)
 	}
 	defer consumer.Close()

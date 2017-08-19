@@ -22,7 +22,7 @@ func SendToHipChat(f FeedbackEvent, cfg Configuration, token Token) error {
 	}
 	err := c.PostMessage(req)
 	if err != nil {
-		log.Printf("Expected no error, but got %q\n", err)
+		log.Fatalln("Expected no error, but got %q\n", err)
 		return err
 	}
 	return err

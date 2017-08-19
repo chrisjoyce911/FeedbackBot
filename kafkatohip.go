@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -10,11 +11,13 @@ func main() {
 
 	cfg, err := LoadConfig("config.json")
 	if err != nil {
+		log.Fatalln("Had an error : ", err)
 		panic(err)
 	}
 
 	token, err := LoadToken("hipchat.json")
 	if err != nil {
+		log.Fatalln("Had an error : ", err)
 		panic(err)
 	}
 
@@ -37,7 +40,7 @@ func main() {
 				var f FeedbackEvent
 				err = json.Unmarshal(msg, &f)
 				if err != nil {
-					fmt.Println("Had an error : ", err)
+					log.Fatalln("Had an error : ", err)
 				}
 
 				f = SetBackground(f)
@@ -45,6 +48,7 @@ func main() {
 				f = FormatMessage(f)
 				err = SendToHipChat(f, cfg, token)
 				if err != nil {
+					log.Fatalln("Had an error : ", err)
 					panic(err)
 				}
 
