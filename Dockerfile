@@ -7,7 +7,7 @@ RUN go get -v ./... && GOOS=linux go build -tags netgo -installsuffix netgo -o m
 
 #Need an image with x509 root certs. Can use scratch if you can download root certs from somewhere.
 FROM scratch
-COPY cert.pem /etc/ssl/certs/ca-certificates.crt
+COPY cacert.pem /etc/ssl/certs/ca-certificates.crt
 COPY --from=0 /usr/local/src/slacktohip/mydockerbot .
 ENTRYPOINT ["/mydockerbot"]
 CMD [""]
