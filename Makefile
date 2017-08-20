@@ -1,10 +1,14 @@
-.PHONY: all docker deps silent-test format test report
+.PHONY: all docker deps silent-test format test report clean 
+SHELL := /bin/sh
 
-all: format kafkatohip.out bin/kafkatohip .git/hooks/pre-commit bin/kafka-console-producer
+all: format bin/kafkatohip.out bin/kafkatohip .git/hooks/pre-commit bin/kafka-console-producer
 
-docker: silent-test bin/docker-kafkatohip bin/.docker-kafkatohip
+help: ## This help message
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/ '
 
-kafkatohip.out: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
+docker: silent-test bin/docker-kafkatohip bin/.ca-bundle bin/.docker-kafkatohip ## Builds Docker image
+
+bin/kafkatohip.out: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	go test -coverprofile=bin/kafkatohip.out
 
 bin/kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
@@ -14,7 +18,6 @@ bin/docker-kafkatohip: kafkatohip.go configmanager.go consumer.go hipchat.go mes
 	SCGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/docker-kafkatohip .
 
 bin/.docker-kafkatohip: bin/kafkatohip bin/docker-kafkatohip Dockerfile
-	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem \
 	docker build -t kafkatohip -f Dockerfile .
 	touch bin/.docker-kafkatohip
 
@@ -23,6 +26,11 @@ bin/kafka-console-producer: kafka-console-producer/kafka-console-producer.go
 
 .git/hooks/pre-commit: pre-commit
 	ln -s ../../pre-commit .git/hooks/pre-commit
+
+bin/.ca-bundle: Dockerfile
+	./mk-ca-bundle.pl -u
+	mv ca-bundle.crt bin/ca-bundle.crt
+	touch bin/.ca-bundle
 
 test:
 	go test -v -cover ./...
@@ -38,3 +46,12 @@ deps:
 
 report:
 	go tool cover -html=bin/kafkatohip.out
+
+clean:
+	-rm bin/.ca-bundle
+	-rm bin/ca-bundle.crt
+	-rm bin/.docker-kafkatohip
+	-rm bin/kafka-console-producer
+	-rm bin/docker-kafkatohip
+	-rm bin/kafkatohip.out
+	-rm bin/kafkatohip

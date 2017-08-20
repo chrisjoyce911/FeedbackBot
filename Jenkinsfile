@@ -32,12 +32,14 @@ pipeline {
                 echo 'As you have done your tests you should now be safe to automaticly deploy to staging and production'
                 echo 'this should be done now as Jumbo values your effort'
                 echo 'and would like to enjoy the value you have just added'
-                echo 'Deploy to staging sites .. with some auto foo'
+                echo 'Deploy to team staging site .. with some auto foo'
                 echo 'Deploy to live  .. with some auto foo'
                 echo ''
                 echo 'If you used ansiable to deploy did you look at http://docs.ansible.com/ansible/latest/hipchat_module.html'
                 echo 'I think this is the compose to update a running docker ?'
-                echo 'docker-compose up -d --no-deps --build kafkatohip'
+                echo 'docker-compose kill -s SIGINT                     # graceful stop of the current container'
+                echo 'sleep 1                                           # need to wait for it to stop, maybe use the docker API?'
+                echo 'docker-compose up -d --no-deps --build kafkatohip # update and start'
             }
         }
     }
