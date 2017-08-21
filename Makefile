@@ -1,4 +1,4 @@
-.PHONY: all docker deps silent-test format test report clean 
+.PHONY: all docker deps silent-test format test report clean
 SHELL := /bin/sh
 
 all: format bin/kafkatohip.out bin/kafkatohip .git/hooks/pre-commit bin/kafka-console-producer
@@ -6,7 +6,7 @@ all: format bin/kafkatohip.out bin/kafkatohip .git/hooks/pre-commit bin/kafka-co
 help: ## This help message
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/ '
 
-docker: silent-test bin/docker-kafkatohip bin/.ca-bundle bin/.docker-kafkatohip ## Builds Docker image
+docker: silent-test bin/docker-kafkatohip bin/.docker-kafkatohip ## Builds Docker image
 
 bin/kafkatohip.out: kafkatohip.go configmanager.go consumer.go hipchat.go messagemanager.go
 	go test -coverprofile=bin/kafkatohip.out
@@ -27,11 +27,6 @@ bin/kafka-console-producer: kafka-console-producer/kafka-console-producer.go
 .git/hooks/pre-commit: pre-commit
 	ln -s ../../pre-commit .git/hooks/pre-commit
 
-bin/.ca-bundle: Dockerfile
-	./mk-ca-bundle.pl -u
-	mv ca-bundle.crt bin/ca-bundle.crt
-	touch bin/.ca-bundle
-
 test:
 	go test -v -cover ./...
 
@@ -48,8 +43,6 @@ report:
 	go tool cover -html=bin/kafkatohip.out
 
 clean:
-	-rm bin/.ca-bundle
-	-rm bin/ca-bundle.crt
 	-rm bin/.docker-kafkatohip
 	-rm bin/kafka-console-producer
 	-rm bin/docker-kafkatohip

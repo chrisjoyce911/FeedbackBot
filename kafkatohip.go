@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -20,6 +23,11 @@ func main() {
 		log.Fatalln("Had an error : ", err)
 		panic(err)
 	}
+
+	router := mux.NewRouter()
+
+	router.HandleFunc("/health/{token}", healthEndpoint).Methods("GET")
+	log.Fatal(http.ListenAndServe(":12345", router))
 
 	fmt.Printf("%s ready, ^C exits\n", cfg.BotName)
 
@@ -57,4 +65,18 @@ func main() {
 		}
 	}
 
+}
+
+func healthEndpoint(w http.ResponseWriter, req *http.Request) {
+
+	params := mux.Vars(req)
+	mytime := time.Now()
+
+	w.Header().Set("Content-Type", "application/json")
+	token := params["token"]
+
+	reply := fmt.Sprintf("{\"status\": \"good\", \"token\": \"%s\", \"uptime\": \"%s\"}", token, mytime)
+
+	w.Write([]byte(reply))
+	return
 }

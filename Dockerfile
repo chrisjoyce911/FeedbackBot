@@ -1,5 +1,4 @@
-FROM scratch
-ADD bin/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
+FROM chrisjoyce911/goscratchcert
 ADD hipchat.json /
 ADD config.json /
 ADD bin/docker-kafkatohip /
