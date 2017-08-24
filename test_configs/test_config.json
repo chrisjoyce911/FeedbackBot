@@ -1,9 +1,11 @@
 {
   "botbame": "Kafka to HipCat",
   "broker": "127.0.0.1:9092",
-  "topic": "my_topic",
+  "apptopic": "my_topic",
+  "webtopic": "my_topic",
   "groupid": "feedback_to_hipchat",
   "release_app": "Integration Testing",
   "release_web": "Integration Testing",
-  "development": "Integration Testing"
+  "development": "Integration Testing",
+  "remoretoken": "RemoteToken"
 }

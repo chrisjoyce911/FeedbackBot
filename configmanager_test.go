@@ -14,11 +14,13 @@ func Test_createMockConfig(t *testing.T) {
 			want: Configuration{
 				BotName:     "Kafka to HipCat",
 				Broker:      "127.0.0.1:9092",
-				Topic:       "my_topic",
+				AppTopic:    "my_topic",
+				WebTopic:    "my_topic",
 				GroupID:     "feedback_to_hipchat",
 				ReleseApp:   "Integration Testing",
 				ReleseWeb:   "Integration Testing",
 				Development: "Integration Testing",
+				RemoteToken: "RemoteToken",
 			},
 		},
 	}

@@ -9,11 +9,13 @@ import (
 type Configuration struct {
 	BotName     string `json:"botbame"`
 	Broker      string `json:"broker"`
-	Topic       string `json:"topic"`
+	AppTopic    string `json:"apptopic"`
+	WebTopic    string `json:"webtopic"`
 	GroupID     string `json:"groupid"`
 	ReleseApp   string `json:"release_app"`
 	ReleseWeb   string `json:"release_web"`
 	Development string `json:"development"`
+	RemoteToken string `json:"remoretoken"`
 }
 
 // Token  ... As the HipChat token will be sorted in encoded josn we handle it in a different way
@@ -26,11 +28,13 @@ func createMockConfig() Configuration {
 	cfg := Configuration{
 		BotName:     "Kafka to HipCat",
 		Broker:      "127.0.0.1:9092",
-		Topic:       "my_topic",
+		AppTopic:    "my_topic",
+		WebTopic:    "my_topic",
 		GroupID:     "feedback_to_hipchat",
 		ReleseApp:   "Integration Testing",
 		ReleseWeb:   "Integration Testing",
 		Development: "Integration Testing",
+		RemoteToken: "RemoteToken",
 	}
 	return cfg
 }
@@ -45,6 +49,7 @@ func createMockToken() Token {
 
 //LoadConfig reads config
 func LoadConfig(configfilename string) (Configuration, error) {
+
 	bytes, err := ioutil.ReadFile(configfilename)
 	if err != nil {
 		return Configuration{}, err
